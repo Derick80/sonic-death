@@ -1,0 +1,42 @@
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+async function seed() {
+    const email = 'iderick@gmail.com'
+
+    // cleanup the existing database
+    await prisma.user.delete({ where: { email: email } }).catch(() => {
+      // no worries if it doesn't exist yet
+    })
+
+    const hashedPassword = (await process.env.HASHEDPASSWORD) as string
+
+    return await prisma.user.create({
+      data: {
+        email,
+       password: {
+            create: {
+                hash: hashedPassword
+
+       }
+        }
+        }
+    })
+
+
+      }
+
+    console.log(`Database has been seeded. 🌱`);
+
+
+
+
+seed()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
