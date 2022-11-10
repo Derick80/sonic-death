@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function seed() {
-    const email = 'you@email.com'
+    const email = (await process.env.SEED_EMAIL) as string
 
     // cleanup the existing database
     await prisma.user.delete({ where: { email: email } }).catch(() => {
