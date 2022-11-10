@@ -2,6 +2,27 @@
 
 - [Remix Docs](https://remix.run/docs)
 
+## Sonic Death Stack
+- Prisma, Postgresql, Tailwind, Prettier + TailwindPrettier + esLint + login/register form
+
+- Google Icons (outlined, symbols) + Roboto Font added to app.css tailwindcss
+
+```
+npx create-remix@latest --template Derick80/sonic-death
+```
+
+- Follow instructions and then in your favorite text editor
+- Add a .env file to the root folder and update it following the .env-example
+- Once that is complete
+
+```
+
+npx prisma db push
+
+npx prisma db seed
+
+```
+
 ## Development
 
 From your terminal:
