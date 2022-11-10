@@ -4,3 +4,7 @@ node_modules
 /build
 /public/build
 .env
+app/styles/app.css
+prisma/migrations/migration_lock.toml
+.gitignore
+prisma/migrations/20221110172612_init/migration.sql
