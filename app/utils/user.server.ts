@@ -15,12 +15,8 @@ export const createUser = async (user: RegisterForm) => {
     data: {
       email: user.email,
 
-      password: {
-        create: {
-          hash: passwordHash
-        }
-      },
-      firstName: user.firstName
+      password:user.password,
+      userName: user.userName
     }
   })
   return { id: newUser.id, email: user.email }
@@ -45,7 +41,7 @@ export const register = async (form: RegisterForm) => {
         fields: {
           email: form.email,
           password: form.password,
-          firstName: form.firstName
+          userName: form.userName
         }
       },
       { status: 400 }
@@ -104,12 +100,10 @@ export const createUserSession = async (userId: string, redirectTo: string) => {
 export const login = async (form: LoginForm) => {
   const user = await prisma.user.findUnique({
     where: { email: form.email },
-    include: {
-      password: true
-    }
+
   })
   invariant(user, 'User not found')
-  const hash = user.password?.hash
+  const hash = user.password
   invariant(hash, 'no hash found')
 
   if (!user || !(await bcrypt.compare(form.password, hash))) {
@@ -136,7 +130,7 @@ export async function getUser(request: Request) {
       select: {
         id: true,
         email: true,
-        firstName: true
+        userName: true
       }
     })
     return user

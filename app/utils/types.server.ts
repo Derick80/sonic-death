@@ -6,5 +6,5 @@ export interface LoginForm {
 export interface RegisterForm {
   email: string
   password: string
-  firstName: string
+  userName: string
 }

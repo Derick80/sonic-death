@@ -26,13 +26,13 @@ type ActionData = {
   fieldErrors?: {
     email: string | undefined
     password: string | undefined
-    firstName?: string | undefined
+    userName?: string | undefined
   }
   fields?: {
     action: string
     email: string
     password: string
-    firstName?: string
+    userName?: string
   }
 }
 const badRequest = (data: ActionData) => json(data, { status: 400 })
@@ -46,7 +46,7 @@ export const action: ActionFunction = async ({ request }) => {
   const action = form.get('_action')
   const email = form.get('email')
   const password = form.get('password')
-  let firstName = form.get('firstName')
+  let userName = form.get('userName')
 
   if (
     typeof action !== 'string' ||
@@ -57,7 +57,7 @@ export const action: ActionFunction = async ({ request }) => {
       formError: 'Invalid form submission'
     })
   }
-  if (action === 'register' && typeof firstName !== 'string') {
+  if (action === 'register' && typeof userName !== 'string') {
     return json({ error: `Invalid Form Data`, form: action }, { status: 400 })
   }
   const fieldErrors = {
@@ -65,7 +65,7 @@ export const action: ActionFunction = async ({ request }) => {
     password: validatePassword(password),
     ...(action === 'register'
       ? {
-          firstName: validateName((firstName as string) || '')
+          userName: validateName((userName as string) || '')
         }
       : {}),
     action: validateText(action)
@@ -81,8 +81,8 @@ export const action: ActionFunction = async ({ request }) => {
       return await login({ email, password })
     }
     case 'register': {
-      firstName = firstName as string
-      return await register({ email, password, firstName })
+      userName = userName as string
+      return await register({ email, password, userName })
     }
     default:
       return badRequest({ fieldErrors, formError: 'Invalid Login' })
@@ -99,7 +99,7 @@ export default function Login() {
   const [formData, setFormData] = useState({
     email: actionData?.fields?.email || '',
     password: actionData?.fields?.password || '',
-    firstName: actionData?.fields?.firstName || ''
+    userName: actionData?.fields?.userName || ''
   })
 
   const handleInputChange = (
@@ -117,7 +117,7 @@ export default function Login() {
       const newState = {
         email: '',
         password: '',
-        firstName: ''
+        userName: ''
       }
       setErrors(newState)
       setFormError('')
@@ -169,11 +169,11 @@ export default function Login() {
             <>
               {/* First Name */}
               <FormField
-                htmlFor='firstName'
+                htmlFor='userName'
                 label='First Name'
-                onChange={(event) => handleInputChange(event, 'firstName')}
-                value={formData.firstName}
-                error={errors?.firstName}
+                onChange={(event) => handleInputChange(event, 'userName')}
+                value={formData.userName}
+                error={errors?.userName}
               />
             </>
           )}

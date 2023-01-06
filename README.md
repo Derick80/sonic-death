@@ -7,6 +7,8 @@
 
 - Google Icons (outlined, symbols) + Roboto Font added to app.css tailwindcss
 
+- Updates to user/password schema to better reflect my current setup.
+
 ```
 npx create-remix@latest --template Derick80/sonic-death
 ```
