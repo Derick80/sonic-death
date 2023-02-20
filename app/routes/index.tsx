@@ -48,7 +48,9 @@ export default function Index() {
         </li>
         <li>
           {user ? (
-            <Form action='/logout'>
+            <Form
+              method='post'
+            action='/logout'>
               <button type='submit'>Logout</button>
             </Form>
           ) : (
