@@ -3,9 +3,11 @@
 - [Remix Docs](https://remix.run/docs)
 
 ## Sonic Death Stack
-- Prisma, Postgresql, Tailwind, Prettier + TailwindPrettier + esLint + login/register form
+- Prisma, Postgresql, Tailwind, Prettier + TailwindPrettier + Radix Icons + esLint + login/register form
 
-- Google Icons (outlined, symbols) + Roboto Font added to app.css tailwindcss
+- [Radix Icons](https://icons.radix-ui.com/)
+-
+- Roboto Font added to app.css tailwindcss
 
 - Updates to user/password schema to better reflect my current setup.
 

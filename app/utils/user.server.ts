@@ -130,7 +130,7 @@ export async function getUser(request: Request) {
       select: {
         id: true,
         email: true,
-        userName: true
+        username: true
       }
     })
     return user
