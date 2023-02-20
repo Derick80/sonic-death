@@ -16,7 +16,7 @@ export const createUser = async (user: RegisterForm) => {
       email: user.email,
 
       password:user.password,
-      userName: user.userName
+      username: user.username
     }
   })
   return { id: newUser.id, email: user.email }
@@ -41,7 +41,7 @@ export const register = async (form: RegisterForm) => {
         fields: {
           email: form.email,
           password: form.password,
-          userName: form.userName
+          userName: form.username
         }
       },
       { status: 400 }
