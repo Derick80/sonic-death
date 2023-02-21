@@ -22,7 +22,7 @@ export default function FormField({
   type,
   value,
   placeHolder,
-  className = 'form-field-primary',
+  className = '',
   checked,
   onClick = () => {},
   onChange = () => {},
@@ -40,7 +40,7 @@ export default function FormField({
         {label}
       </label>
       <input
-        className={`form-field-primary ${className}`}
+        className={` ${className}`}
         onChange={(event) => {
           onChange(event)
           setErrorText('')

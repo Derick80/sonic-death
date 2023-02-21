@@ -13,12 +13,12 @@ export const gitHubStrategy = new GitHubStrategy(
   {
     clientID: ghClientId,
     clientSecret: ghClientSecret,
-    callbackURL: 'http://localhost:3521/github/callback'
+    callbackURL: 'http://localhost:3521/github/callback',
   },
   async ({ accessToken, extraParams, profile }) => {
     const account = await getAccount({
       provider: profile.provider,
-      providerAccountId: profile.id
+      providerAccountId: profile.id,
     })
 
     if (account) return account.user.id

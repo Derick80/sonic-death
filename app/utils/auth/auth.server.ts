@@ -1,6 +1,6 @@
 import type { User } from '@prisma/client'
 import { Authenticator, AuthorizationError } from 'remix-auth'
-import { getSession, sessionStorage } from './session.server'
+import {  sessionStorage } from './session.server'
 import { loginStrategy, registerStrategy } from './strategy/form.server'
 import type { Session } from '@remix-run/node'
 import { gitHubStrategy } from './strategy/github.server'
