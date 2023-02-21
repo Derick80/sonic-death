@@ -21,12 +21,13 @@ const clientID = process.env.DISCORD_CLIENT_ID as string
 if (!clientID) throw new Error('DISCORD_CLIENT_ID is not defined')
 const clientSecret = process.env.DISCORD_CLIENT_SECRET as string
 if (!clientSecret) throw new Error('DISCORD_CLIENT_SECRET is not defined')
-
+const redirectUri = process.env.DISCORD_CALLBACK_URL as string
+if (!redirectUri) throw new Error('DISCORD_CALLBACK_URL is not defined')
 export const discordStrategy = new DiscordStrategy(
   {
     clientID: clientID,
     clientSecret: clientSecret,
-    callbackURL: 'http://localhost:3521/discord/callback',
+    callbackURL: redirectUri,
     // Provide all the scopes you want as an array
     scope: ['identify', 'email']
   },
