@@ -1,28 +1,53 @@
-# Welcome to Remix!
+# Sonic Death Stack
 
-- [Remix Docs](https://remix.run/docs)
+- Prisma, Postgresql, Tailwind, Prettier + TailwindPrettier + Radix Icons + esLint + Remix-Auth (email/password login, Github and Discord login)
 
-## Sonic Death Stack
-- Prisma, Postgresql, Tailwind, Prettier + TailwindPrettier + Radix Icons + esLint + login/register form
+- ## Auth
 
+  - Note that trying to use 2 social logins that have the same email address will cause one of the logins to fail
+  - [Remix-Auth](https://github.com/sergiodxa/remix-auth)
+  - [Remix-Auth-Github](https://github.com/sergiodxa/remix-auth-github)
+  - [Remix-Auth-Form](https://github.com/sergiodxa/remix-auth-form)
+  - [Remix-Auth-Discord](https://github.com/JonnyBnator/remix-auth-discord)
+
+### Discord Login
+
+- [Register your app](https://discord.com/developers/applications)
+- Update env vars (see .env-example)
+
+### Github Login
+
+- [Register your app](https://github.com/settings/developers)
+- Update env vars (see .env-example)
+
+### Styles and Icons
+
+- [Tailwindcss](https://tailwindcss.com/)
 - [Radix Icons](https://icons.radix-ui.com/)
--
-- Roboto Font added to app.css tailwindcss
+- Roboto Font added to app.css
 
-- Updates to user/password schema to better reflect my current setup.
+## Using this template
 
-```
+- In your terminal paste the command below
+
+```{bash}
+
 npx create-remix@latest --template Derick80/sonic-death
-```
-
-- Follow instructions and then in your favorite text editor
-- Add a .env file to the root folder and update it following the .env-example
-- Once that is complete
 
 ```
+
+- Add a .env file to the root folder or update the name and content of the .env-example
+- Modify the seed.ts file if you'd like to change the first user information
+- Push prisma schema to the database
+
+```{bash}
 
 npx prisma db push
+```
 
+- Seed the database (optional)
+
+```{bash}
 npx prisma db seed
 
 ```

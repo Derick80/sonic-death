@@ -18,6 +18,44 @@ id String @id @unique @default(uuid())
   username      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-password String
+password String?
+ accounts    Account[]
+  tokens      Token[]
+}
+
+model Token {
+  id        String    @id @default(cuid())
+  token     String
+  type      TokenType
+  expiresAt DateTime?
+  sentTo    String?
+  usedAt    DateTime?
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([token, type])
+  @@index([userId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  provider          String
+  providerAccountId String
+  refreshToken      String?
+  accessToken       String?
+  expiresAt         Int?
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+enum TokenType {
+  REFRESH_TOKEN
+  VERIFY_EMAIL
+  RESET_PASSWORD
 }
 
