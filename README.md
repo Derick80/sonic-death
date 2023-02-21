@@ -31,9 +31,7 @@
 - In your terminal paste the command below
 
 ```{bash}
-
 npx create-remix@latest --template Derick80/sonic-death
-
 ```
 
 - Add a .env file to the root folder or update the name and content of the .env-example
@@ -41,7 +39,6 @@ npx create-remix@latest --template Derick80/sonic-death
 - Push prisma schema to the database
 
 ```{bash}
-
 npx prisma db push
 ```
 
@@ -49,7 +46,6 @@ npx prisma db push
 
 ```{bash}
 npx prisma db seed
-
 ```
 
 ## Development
