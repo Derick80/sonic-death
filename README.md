@@ -5,6 +5,9 @@
 ## Sonic Death Stack
 - Prisma, Postgresql, Tailwind, Prettier + TailwindPrettier + Radix Icons + esLint + login/register form
 
+- Auth
+  - [https://github.com/sergiodxa/remix-auth-github](https://github.com/sergiodxa/remix-auth-github)
+  -
 - [Radix Icons](https://icons.radix-ui.com/)
 -
 - Roboto Font added to app.css tailwindcss

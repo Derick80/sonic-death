@@ -1,204 +1,57 @@
-import type {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction
-} from '@remix-run/node'
-import { json } from '@remix-run/node'
-import { Form, useActionData } from '@remix-run/react'
-import { useRef, useState, useEffect } from 'react'
-import FormField from '~/components/shared/form-field'
-import { getUser, login, register } from '~/utils/user.server'
-import {
-  validateEmail,
-  validatePassword,
-  validateName,
-  validateText
-} from '~/utils/validators.server'
+import type { ActionFunction, LoaderArgs, MetaFunction } from '@remix-run/node'
+import { redirect } from '@remix-run/node'
+import { Form, Link } from '@remix-run/react'
+import { badRequest, serverError } from 'remix-utils'
+import { AuthForm } from '~/components/auth/auth-form'
+import { SocialLoginForm } from '~/components/auth/social-login-form'
+import { isAuthenticated, authenticator } from '~/utils/auth/auth.server'
+
 export const meta: MetaFunction = () => {
   return {
-    title: 'Remix sonic-death template | Login',
-    description: 'Login to do many things!'
+    title: `Derick's Personal Blog | Login`,
+    description: `Login to Derick's Personal Blog`
   }
 }
 
-type ActionData = {
-  formError?: string
-  fieldErrors?: {
-    email: string | undefined
-    password: string | undefined
-    username?: string | undefined
-  }
-  fields?: {
-    action: string
-    email: string
-    password: string
-    username?: string
-  }
-}
-const badRequest = (data: ActionData) => json(data, { status: 400 })
+// export async function loader(args: LoaderArgs) {
 
-export const loader: LoaderFunction = async ({ request }) => {
-  return await getUser(request)
-}
+//   return (await isAuthenticated(args.request)) ? redirect('/') : null
+// }
 
 export const action: ActionFunction = async ({ request }) => {
-  const form = await request.formData()
-  const action = form.get('_action')
-  const email = form.get('email')
-  const password = form.get('password')
-  let username = form.get('username')
-
-  if (
-    typeof action !== 'string' ||
-    typeof email !== 'string' ||
-    typeof password !== 'string'
-  ) {
-    return badRequest({
-      formError: 'Invalid form submission'
+  try {
+    return await authenticator.authenticate('login', request, {
+      successRedirect: '/'
     })
-  }
-  if (action === 'register' && typeof username !== 'string') {
-    return json({ error: `Invalid Form Data`, form: action }, { status: 400 })
-  }
-  const fieldErrors = {
-    email: validateEmail(email),
-    password: validatePassword(password),
-    ...(action === 'register'
-      ? {
-          username: validateName((username as string) || '')
-        }
-      : {}),
-    action: validateText(action)
-  }
-
-  if (Object.values(fieldErrors).some(Boolean))
-    return badRequest({
-      formError: 'Invalid form submission'
-    })
-
-  switch (action) {
-    case 'login': {
-      return await login({ email, password })
-    }
-    case 'register': {
-      username = username as string
-      return await register({ email, password, username })
-    }
-    default:
-      return badRequest({ fieldErrors, formError: 'Invalid Login' })
+  } catch (error) {
+    if (error instanceof Response) return error
+    if (error instanceof Error)
+      return badRequest({ message: `${error.message} +login error` })
+    return serverError(error)
   }
 }
-
 export default function Login() {
-  const actionData = useActionData<ActionData>()
-  const firstLoad = useRef(true)
-  const [errors, setErrors] = useState(actionData?.fieldErrors || {})
-  const [formError, setFormError] = useState(actionData?.fieldErrors || '')
-  const [action, setAction] = useState('login')
-
-  const [formData, setFormData] = useState({
-    email: actionData?.fields?.email || '',
-    password: actionData?.fields?.password || '',
-    username: actionData?.fields?.username || ''
-  })
-
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    field: string
-  ) => {
-    setFormData((form) => ({
-      ...form,
-      [field]: event.target.value
-    }))
-  }
-  useEffect(() => {
-    // Clear the form if we switch forms
-    if (!firstLoad.current) {
-      const newState = {
-        email: '',
-        password: '',
-        username: ''
-      }
-      setErrors(newState)
-      setFormError('')
-      setFormData(newState)
-    }
-  }, [action])
-
-  useEffect(() => {
-    if (!firstLoad.current) {
-      setFormError('')
-    }
-  }, [formData])
-
-  useEffect(() => {
-    // We don't want to reset errors on page load because we want to see them
-    firstLoad.current = false
-  }, [])
   return (
-    <>
-      <div className='mx-auto p-2 md:w-1/4 md:p-4'>
-        <h2 className='pb-2 text-center text-xl font-semibold'>
-          Welcome to my Site
-        </h2>
-        <p className='pb-2 text-center text-sm italic'>
-          {action === 'login'
-            ? 'Please Login to continue'
-            : 'Sign up to start saying things'}
-        </p>
-        <Form method='post' className='space-y-6' noValidate>
-          <div>{formError}</div>
-
-          <FormField
-            htmlFor='email'
-            label='Email'
-            value={formData.email}
-            onChange={(event) => handleInputChange(event, 'email')}
-            error={errors?.email}
-          />
-          <FormField
-            htmlFor='password'
-            label='Password'
-            value={formData.password}
-            type='password'
-            onChange={(event) => handleInputChange(event, 'password')}
-            error={errors?.password}
-            autocomplete='new-password'
-          />
-          {action === 'register' && (
-            <>
-              {/* Username */}
-              <FormField
-                htmlFor='username'
-                label='Username'
-                onChange={(event) => handleInputChange(event, 'username')}
-                value={formData.username}
-                error={errors?.username}
-              />
-            </>
-          )}
-
-          <div>
-            <button
-              className='w-full rounded-md bg-green-600 p-2 text-center uppercase text-white'
-              type='submit'
-              name='_action'
-              value={action}
-            >
-              {action === 'login' ? `Login` : `Sign Up`}
-            </button>
-          </div>
-        </Form>
+    <div className='mx-auto mt-10 flex h-fit w-1/4 flex-col shadow-2xl md:mt-20'>
+   <Form action="/login" method="post">
+      <input type='email' name='email' placeholder='Email' />
+      <input type='password' name='password' placeholder='Password' />
+      <button type='submit'>Login</button>
+    </Form>
+      <div className='mt-2 mb-2 flex h-full flex-col items-center justify-center md:mt-5 md:mb-5'>
+        <h3 className='mh3'>OR</h3>
+        <p className='text-sm italic'>Login with your social account</p>
       </div>
-      <div className='flex flex-col items-center p-2 md:p-4'>
-        <p className='font-semibold uppercase'>or</p>
-        <button
-          onClick={() => setAction(action == 'login' ? 'register' : 'login')}
-          className='mt-3 rounded-md bg-green-600 p-2 text-center font-semibold uppercase text-white'
-        >
-          {action === 'login' ? 'Sign Up' : 'Sign In'}
-        </button>
+
+      <SocialLoginForm provider='github'>
+        <button className=''>Github</button>
+      </SocialLoginForm>
+
+      <div className='mt-2 mb-2 flex flex-col items-center justify-center md:mt-5 md:mb-5'>
+        <Link to='/register'>New to the site?? ..Register Here</Link>
       </div>
-    </>
+    </div>
   )
 }
+
+

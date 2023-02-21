@@ -3,24 +3,67 @@ import { prisma } from './prisma.server'
 import type { RegisterForm, LoginForm } from './types.server'
 import bcrypt from 'bcryptjs'
 import invariant from 'tiny-invariant'
+import type { Prisma } from '@prisma/client'
+import { createPasswordHash } from './auth/auth-service.server'
 
 const secret = process.env.SESSION_SECRET
 if (!secret) {
   throw new Error('SESSION_SECRET is not set')
 }
-
-export const createUser = async (user: RegisterForm) => {
-  const passwordHash = await bcrypt.hash(user.password, 10)
-  const newUser = await prisma.user.create({
-    data: {
-      email: user.email,
-
-      password:user.password,
-      username: user.username
-    }
-  })
-  return { id: newUser.id, email: user.email }
+const defaultUserSelect = {
+  id: true,
+  email: true,
+  userName: true,
 }
+export const getUserPasswordHash = async (
+  input: Prisma.UserWhereUniqueInput
+) => {
+  const user = await prisma.user.findUnique({
+    where: input
+  })
+  if (user) {
+    return {
+      user: { ...user, password: null },
+      passwordHash: user.password
+    }
+  }
+  return { user: null, passwordHash: null }
+}
+export const createUser = async (
+  input: Prisma.UserCreateInput & {
+    password?: string
+    account?: Omit<Prisma.AccountCreateInput, 'user'>
+  }
+) => {
+  const data: Prisma.UserCreateInput = {
+    email: input.email,
+    username: input.username
+  }
+
+  if (input.password) {
+    data.password = await createPasswordHash(input.password)
+  }
+
+  if (input.account) {
+    data.accounts = {
+      create: [
+        {
+          provider: input.account.provider,
+          providerAccountId: input.account.providerAccountId,
+          accessToken: input.account.accessToken,
+          refreshToken: input.account.refreshToken
+        }
+      ]
+    }
+  }
+
+  const user = await prisma.user.create({
+    data,
+    select: defaultUserSelect
+  })
+  return user
+}
+
 export const register = async (form: RegisterForm) => {
   const exists = await prisma.user.count({ where: { email: form.email } })
 
@@ -41,7 +84,7 @@ export const register = async (form: RegisterForm) => {
         fields: {
           email: form.email,
           password: form.password,
-          userName: form.username
+          username: form.username
         }
       },
       { status: 400 }
@@ -73,19 +116,7 @@ export async function getUserId(request: Request) {
   return userId
 }
 
-// placing requireUserId in a route makes the route only accessible by a logged in user
-export async function requireUserId(
-  request: Request,
-  redirectTo: string = new URL(request.url).pathname
-) {
-  const session = await getUserSession(request)
-  const userId = session.get('userId')
-  if (!userId || typeof userId !== 'string') {
-    const searchParams = new URLSearchParams([['redirectTo', redirectTo]])
-    throw redirect(`/login?${searchParams}`)
-  }
-  return userId
-}
+
 
 export const createUserSession = async (userId: string, redirectTo: string) => {
   const session = await storage.getSession()
@@ -117,16 +148,10 @@ export const login = async (form: LoginForm) => {
   return createUserSession(user.id, '/')
 }
 
-export async function getUser(request: Request) {
-  const userId = await getUserId(request)
-  if (typeof userId !== 'string') {
-    return null
-  }
-  try {
+export async function getUser(input: Prisma.UserWhereUniqueInput) {
+
     const user = await prisma.user.findUnique({
-      where: {
-        id: userId
-      },
+      where: input,
       select: {
         id: true,
         email: true,
@@ -134,10 +159,9 @@ export async function getUser(request: Request) {
       }
     })
     return user
-  } catch {
-    throw logout(request)
-  }
 }
+
+
 
 export async function logout(request: Request) {
   const session = await getUserSession(request)
