@@ -5,6 +5,7 @@ import { loginStrategy, registerStrategy } from './strategy/form.server'
 import type { Session } from '@remix-run/node'
 import { gitHubStrategy } from './strategy/github.server'
 import { getUser } from '../user.server'
+import { discordStrategy } from './strategy/discord.server'
 
 export const authenticator = new Authenticator<User['id']>(sessionStorage, {
   throwOnError: true
@@ -12,6 +13,7 @@ export const authenticator = new Authenticator<User['id']>(sessionStorage, {
 
 authenticator.use(registerStrategy, 'register')
 authenticator.use(loginStrategy, 'login')
+authenticator.use(discordStrategy, 'discord')
 authenticator.use(gitHubStrategy, 'github')
 
 export const isAuthenticated = async (request: Request) => {
@@ -25,16 +27,5 @@ export const setUserSession = async (session: Session, userId: User['id']) => {
   return session
 }
 
-export const setUserSessionAndCommit = async (
-  request: Request,
-  userId: User['id']
-) => {
-  const session = await getSession(request)
-  await setUserSession(session, userId)
-  const headers = new Headers({
-    'Set-Cookie': await sessionStorage.commitSession(session)
-  })
-  return headers
-}
 
 export { AuthorizationError }

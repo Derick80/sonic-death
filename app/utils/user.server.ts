@@ -13,7 +13,7 @@ if (!secret) {
 const defaultUserSelect = {
   id: true,
   email: true,
-  userName: true,
+  username: true,
 }
 export const getUserPasswordHash = async (
   input: Prisma.UserWhereUniqueInput

@@ -13,10 +13,10 @@ export const meta: MetaFunction = () => {
   }
 }
 
-// export async function loader(args: LoaderArgs) {
+export async function loader(args: LoaderArgs) {
 
-//   return (await isAuthenticated(args.request)) ? redirect('/') : null
-// }
+  return (await isAuthenticated(args.request)) ? redirect('/') : null
+}
 
 export const action: ActionFunction = async ({ request }) => {
   try {
@@ -33,7 +33,9 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Login() {
   return (
     <div className='mx-auto mt-10 flex h-fit w-1/4 flex-col shadow-2xl md:mt-20'>
-   <Form action="/login" method="post">
+   <Form action="/login" method="post"
+      className='flex flex-col items-center justify-center p-5'>
+
       <input type='email' name='email' placeholder='Email' />
       <input type='password' name='password' placeholder='Password' />
       <button type='submit'>Login</button>
@@ -43,10 +45,14 @@ export default function Login() {
         <p className='text-sm italic'>Login with your social account</p>
       </div>
 
-      <SocialLoginForm provider='github'>
+     <div className='flex flex-col items-center justify-center'>
+     <SocialLoginForm provider='github'>
         <button className=''>Github</button>
       </SocialLoginForm>
-
+      <SocialLoginForm provider='discord'>
+        <button className=''>Discord </button>
+      </SocialLoginForm>
+      </div>
       <div className='mt-2 mb-2 flex flex-col items-center justify-center md:mt-5 md:mb-5'>
         <Link to='/register'>New to the site?? ..Register Here</Link>
       </div>

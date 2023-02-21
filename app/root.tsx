@@ -1,4 +1,5 @@
-import { json, LoaderArgs, MetaFunction } from '@remix-run/node'
+import type { LoaderArgs, MetaFunction } from '@remix-run/node';
+import { json } from '@remix-run/node'
 import {
   isRouteErrorResponse,
   Links,
@@ -10,7 +11,6 @@ import {
   useLoaderData,
   useRouteError
 } from '@remix-run/react'
-import { useOptionalUser } from './lib/app-utils'
 import styles from './styles/app.css'
 import { isAuthenticated } from './utils/auth/auth.server'
 

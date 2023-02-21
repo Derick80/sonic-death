@@ -2,7 +2,7 @@ import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { useEffect } from 'react'
 
 type Props = {
-  authType: 'register' | 'login' | 'request' | 'confirm'
+  authType: 'register' | 'login'
 }
 
 const actionMap: Record<Props['authType'], { button: string; url: string }> = {
@@ -13,14 +13,6 @@ const actionMap: Record<Props['authType'], { button: string; url: string }> = {
   login: {
     url: '/login',
     button: 'Log in'
-  },
-  request: {
-    url: '/request-password-reset',
-    button: 'Request password reset'
-  },
-  confirm: {
-    url: '/confirm-password-reset',
-    button: 'Confirm password'
   }
 }
 
@@ -47,34 +39,12 @@ export const AuthForm = ({ authType }: Props) => {
       <input type='hidden' name='redirectTo' value={redirectTo || '/'} />
       <input type='hidden' name='token' value={token || ''} />
 
-      {authType !== 'confirm' &&  (
-        <>
-          <label className='text-zinc-900 dark:text-slate-200 text-sm'>
-            Email
-          </label>
-          <input
-            className='form-field-primary'
-            id='email'
-            name='email'
-            type='email'
-            placeholder='youremail@mail.com'
-          />
+     <input type='email' name='email' placeholder='Email' />
+      <input type='password' name='password' placeholder='Password' />
+      {authType === 'register' && (
+        <input type='text' name='username' placeholder='Username' />
+      )}
 
-        </>
-      )}
-      {authType !== 'request' && (
-        <>
-          <label>Password</label>
-          <input
-            className='form-field-primary'
-            id='password'
-            name='password'
-            type='password'
-            autoComplete='current-password'
-            placeholder='********'
-          />
-        </>
-      )}
 
       <button className='btn-base btn-outline mb-2' type='submit'>
         {button}
